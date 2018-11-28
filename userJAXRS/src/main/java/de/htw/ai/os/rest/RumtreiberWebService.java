@@ -1,9 +1,9 @@
-package de.htw.ai.wad.rest;
+package de.htw.ai.os.rest;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,32 +15,43 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import de.htw.ai.wad.bean.LocationEntry;
-import de.htw.ai.wad.bean.User;
-import de.htw.ai.wad.storage.UserDB;
+import de.htw.ai.os.bean.LocationEntry;
+import de.htw.ai.os.bean.User;
+import de.htw.ai.os.storage.Dao;
+import de.htw.ai.os.storage.TestDB;
 
-// URL fuer diesen Service ist: http://localhost:8080/${project.artifactId}/<url-pattern>/users 
-@Path("/users")
+// URL fuer diesen Service ist: http://localhost:8080/${project.artifactId}/<url-pattern>
 public class RumtreiberWebService {
+	
+	private static final Logger log = Logger.getLogger( RumtreiberWebService.class.getName() );
+	private Dao dao = new TestDB();
+//	private Dao dao = new DaoDB();
 
-	//GET http://localhost:8080/userJAXRS/rest/users
-	//Returns all location Entries without the the password
+	/**
+	 * GET http://localhost:8080/rumtreiber/
+	 * @return all location Entries without the the password
+	 */
 	@GET 
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<LocationEntry> getAll() {
-		System.out.println("getAll-Request: Returning all contacts!");
-		//TODO: db: SELECT *
-		
-		return new ArrayList<LocationEntry>();
-		//return UserDB.getInstance().getAllUsers();
+		System.out.println("getAll-Request: Returning all contacts with positions!");
+		log.info("getAll-Request: Returning all contacts with positions!");
+		return dao.getAllLocationEntries();
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @param longnitude
+	 * @param lattitude
+	 */
 	//Returns: 200 and user with id 1
 	//Returns: null on provided id not found
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public void updatePosition(@PathParam("id") Integer id, @QueryParam("long") double longnitude, @QueryParam("lat") double lattitude) {
+		log.info("updatePosition-Request: Trying to update database!");
 		/*User contact = UserDB.getInstance().getUser(id);
 		if (contact != null) {
 			System.out.println("getUser: Returning contact for id " + id);
@@ -54,15 +65,16 @@ public class RumtreiberWebService {
         //TODO: alten Eintrag zwischenspeichern, danach überschreiben
 	}
 
-	// POST http://localhost:8080/userJAXRS/rest/users with user in payload
+	/** 
+	 * POST http://localhost:8080/rumtreiber with user in payload
+	 * @param user
+	 * @return new generated id
+	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public int registrateUser(User user) {
-		// generate ID
-		// db: CREATE
-		return 22399;
-//	     Integer newId = UserDB.getInstance().addUser(user);
-//	     return newId.toString();
+		log.info("registrateUser-Request: Trying to supplement database!");
+		return dao.addUser(user);
 	}
 }

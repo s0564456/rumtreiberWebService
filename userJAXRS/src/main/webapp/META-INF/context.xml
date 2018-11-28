@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<Resource name="jdbc/adviDB" 
+	      auth="Container" 
+	      type="javax.sql.DataSource" 
+	      driverClassName="com.mysql.jdbc.Driver" 
+	      url="jdbc:mysql://db.f4.htw-berlin.de:3306/_schueler__adviDB"
+	      username="schueler" 
+	      password="schueler" 	      
+	      maxActive="6" 
+	      maxIdle="3" 
+	      maxWait="10000"/>
+</Context>
+      

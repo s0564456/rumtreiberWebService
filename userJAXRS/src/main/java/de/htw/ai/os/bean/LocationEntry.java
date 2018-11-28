@@ -1,4 +1,4 @@
-package de.htw.ai.wad.bean;
+package de.htw.ai.os.bean;
 
 import java.sql.Timestamp;
 
@@ -71,11 +71,11 @@ public class LocationEntry {
 
 	
 	
-	LocationEntry(){
+	public LocationEntry(){
 		
 	}
 	
-	LocationEntry(String name, Timestamp lastTimestamp){
+	public LocationEntry(String name, Timestamp lastTimestamp){
 		this.name = name;
 		this.lastTimestamp = lastTimestamp;
 	}
