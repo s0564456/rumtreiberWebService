@@ -21,6 +21,7 @@ import de.htw.ai.os.storage.Dao;
 import de.htw.ai.os.storage.TestDB;
 
 // URL fuer diesen Service ist: http://localhost:8080/${project.artifactId}/<url-pattern>
+@Path("/db")
 public class RumtreiberWebService {
 	
 	private static final Logger log = Logger.getLogger( RumtreiberWebService.class.getName() );
@@ -28,7 +29,7 @@ public class RumtreiberWebService {
 //	private Dao dao = new DaoDB();
 
 	/**
-	 * GET http://localhost:8080/rumtreiber/
+	 * GET http://localhost:8080/rumtreiber/data
 	 * @return all location Entries without the the password
 	 */
 	@GET 
@@ -66,7 +67,7 @@ public class RumtreiberWebService {
 	}
 
 	/** 
-	 * POST http://localhost:8080/rumtreiber with user in payload
+	 * POST http://localhost:8080/rumtreiber/data with user in payload
 	 * @param user
 	 * @return new generated id
 	 */
