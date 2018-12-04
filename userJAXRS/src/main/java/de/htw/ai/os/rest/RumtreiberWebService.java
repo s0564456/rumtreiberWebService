@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import de.htw.ai.os.bean.LocationEntry;
 import de.htw.ai.os.bean.User;
 import de.htw.ai.os.storage.Dao;
+import de.htw.ai.os.storage.DaoDB;
 import de.htw.ai.os.storage.TestDB;
 
 // URL fuer diesen Service ist: http://localhost:8080/${project.artifactId}/<url-pattern>
@@ -27,7 +28,8 @@ public class RumtreiberWebService {
 	private static final Logger log = Logger.getLogger( RumtreiberWebService.class.getName() );
 	private Dao dao = new TestDB();
 //	private Dao dao = new DaoDB();
-
+	
+	
 	/**
 	 * GET http://localhost:8080/rumtreiber/data
 	 * @return all location Entries without the the password
@@ -37,6 +39,7 @@ public class RumtreiberWebService {
 	public Collection<LocationEntry> getAll() {
 		System.out.println("getAll-Request: Returning all contacts with positions!");
 		log.info("getAll-Request: Returning all contacts with positions!");
+		dao = new DaoDB();
 		return dao.getAllLocationEntries();
 	}
 
