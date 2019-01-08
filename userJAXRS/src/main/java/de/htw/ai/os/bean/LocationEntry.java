@@ -1,83 +1,105 @@
 package de.htw.ai.os.bean;
 
+import java.awt.Point;
 import java.sql.Timestamp;
+
 
 public class LocationEntry {
 	
-	private String name;
-	private Timestamp lastTimestamp;
-	private Timestamp secondlastTimestamp;
-	private double lastLognitude;
-	private double secondlastLognitude;
-	private double lastLattitude;
-	private double secondlastLattitude;
+	static private final byte[] DEFAULT_HASH = HashTools.sha256HashCode("");
 	
-	public String getName() {
-		return name;
+	private long id;
+	private String userId;
+	private byte[] passwordHash;
+	private Timestamp last_timestamp;
+	private Timestamp secondlast_timestamp;
+	private Point last_position;
+	private Point secondlast_position;
+	private float last_direction;
+	private float secondlast_direction;
+	
+	
+	public LocationEntry() {
+		this.id = 0;
+		this.userId = "newUser";
+		this.passwordHash = DEFAULT_HASH;
+	}
+	
+	public LocationEntry(String name, Timestamp timestamp) {
+		this.userId = name;
+		this.last_timestamp = timestamp;
+	}
+	
+	
+	public long getId() {
+		return id;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setId(final long id) {
+		this.id = id;
+	}
+	
+	public String getUserId() {
+		return userId;
 	}
 
+	public void setUserId(final String userId) {
+		this.userId = userId;
+	}
+	
+	public byte[] getPasswordHash() {
+		return passwordHash;
+	}
+
+	public void setPasswordHash(final byte[] passwordHash) {
+		this.passwordHash = passwordHash;
+	}
+	
 	public Timestamp getLastTimestamp() {
-		return lastTimestamp;
+		return last_timestamp;
 	}
 
-	public void setLastTimestamp(Timestamp lastTimestamp) {
-		this.lastTimestamp = lastTimestamp;
+	public void setLastTimestamp(final Timestamp lastTimestamp) {
+		this.last_timestamp = lastTimestamp;
 	}
-
+	
 	public Timestamp getSecondlastTimestamp() {
-		return secondlastTimestamp;
+		return secondlast_timestamp;
 	}
 
-	public void setSecondlastTimestamp(Timestamp secondlastTimestamp) {
-		this.secondlastTimestamp = secondlastTimestamp;
-	}
-
-	public double getLastLognitude() {
-		return lastLognitude;
-	}
-
-	public void setLastLognitude(double lastLognitude) {
-		this.lastLognitude = lastLognitude;
-	}
-
-	public double getSecondlastLognitude() {
-		return secondlastLognitude;
-	}
-
-	public void setSecondlastLognitude(double secondlastLognitude) {
-		this.secondlastLognitude = secondlastLognitude;
-	}
-
-	public double getLastLattitude() {
-		return lastLattitude;
-	}
-
-	public void setLastLattitude(double lastLattitude) {
-		this.lastLattitude = lastLattitude;
-	}
-
-	public double getSecondlastLattitude() {
-		return secondlastLattitude;
-	}
-
-	public void setSecondlastLattitude(double secondlastLattitude) {
-		this.secondlastLattitude = secondlastLattitude;
-	}
-
-
-	
-	
-	public LocationEntry(){
-		
+	public void setSecondlastTimestamp(final Timestamp secondlastTimestamp) {
+		this.secondlast_timestamp = secondlastTimestamp;
 	}
 	
-	public LocationEntry(String name, Timestamp lastTimestamp){
-		this.name = name;
-		this.lastTimestamp = lastTimestamp;
+	public Point getLast_position() {
+		return last_position;
 	}
 
+	public void setLast_position(final Point last_position) {
+		this.last_position = last_position;
+	}
+	
+	public Point getSecondlast_position() {
+		return secondlast_position;
+	}
+	
+	public void setSecondlast_position(final Point secondlast_position) {
+		this.secondlast_position = secondlast_position;
+	}
+	
+	public float getLast_direction() {
+		return last_direction;
+	}
+
+	public void setLast_direction(final float last_direction) {
+		this.last_direction = last_direction;
+	}
+
+	public float getSecondlast_direction() {
+		return secondlast_direction;
+	}
+
+	public void setSecondlast_direction(final float secondlast_direction) {
+		this.secondlast_direction = secondlast_direction;
+	}
 }
