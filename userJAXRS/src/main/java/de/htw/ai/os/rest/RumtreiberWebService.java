@@ -8,6 +8,7 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,14 +30,28 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response.Status;
 
 import de.htw.ai.os.bean.LocationEntry;
+import de.htw.ai.os.storage.Dao;
+import de.htw.ai.os.storage.DaoDB;
 
 
-@Path("")
-@ApplicationPath("")
+@Path("/tunichtgut")
+//@ApplicationPath("")
 public class RumtreiberWebService {
 	
 	static private final String QUERY_USER = "select u.id from LocationEntry u where " 
 			+ "((:userId is null) or (u.userId = :userId))";
+	private Dao dao = new DaoDB();
+	
+	// zum Testen , aus der fertigen Version rausnehmen
+	@GET
+	@Path("hi")
+	// wie folgt addressiert:  http://localhost bzw rumtreiber.f4...:8080/rumtreiber/data/tunichtgut/hi
+	@Produces(APPLICATION_JSON)
+	public Collection<LocationEntry> getirgendwas() {
+		Collection<LocationEntry> res = dao.getAllLocationEntries();
+		System.out.println("getUser: Returning user harry " );
+		return res;
+	}
 	
 	@GET
 	@Path("users/{id}")
