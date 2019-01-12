@@ -1,5 +1,6 @@
 package de.htw.ai.os.storage;
 
+import java.awt.Point;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,8 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.postgresql.util.PGobject;
+
+import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import de.htw.ai.os.bean.LocationEntry;
 import de.htw.ai.os.bean.User;
@@ -47,7 +50,7 @@ public class DaoDB implements Dao {
 	}
 	 
 	@Override
-	public User authenticate(String userId, String password) {
+	public LocationEntry authenticate(String userId) {
 		// TODO Automatisch generierter Methodenstub
 		return null;
 	}
@@ -76,7 +79,7 @@ public class DaoDB implements Dao {
 	            	entry.setId(rs.getInt(1));
 	            	entry.setUserId(rs.getString(2));
 	            	entry.setLastTimestamp(rs.getTimestamp(3));
-	            	//entry.setLast_position(((PGobject) rs.getObject(4))); 
+	            	entry.setLast_position(((Point) rs.getObject(4))); 
 	            	list.add(entry);
 	            }
 	            
@@ -94,6 +97,40 @@ public class DaoDB implements Dao {
 	                System.out.println("Exception in closing DB resources");
 	            } 
 	        }
+	}
+	
+	public String updatePosition(LocationEntry locationTemplate) {
+		Connection con = null;
+        PreparedStatement stmt = null;
+        int result;
+
+        try {
+            con = ds.getConnection();
+            stmt = con.prepareStatement("UPDATE LocationEntry "
+            		+ "SET last_timestemp = ?,  secondlast_timestemp = ?, last_position = ?, secondlast_position = ?, last_direction = ?, secondlast_direction = ?"
+            		+ "WHERE userId = ?");
+            stmt.setTimestamp(1, locationTemplate.getLastTimestamp());
+            stmt.setTimestamp(2, locationTemplate.getSecondlastTimestamp());
+            stmt.setString(3, locationTemplate.getLast_position().toString());
+            stmt.setString(4, locationTemplate.getSecondlast_position().toString());
+            stmt.setFloat(5, locationTemplate.getLast_direction());
+            stmt.setFloat(6, locationTemplate.getSecondlast_direction());
+            stmt.setString(7, locationTemplate.getUserId());
+            result = stmt.executeUpdate();
+            return "INSERTION SUCCEDED";
+        } catch (SQLException e) {
+            System.out.println("SQLException updating location");
+            e.printStackTrace();
+            return "INSERTION FAILED";
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                System.out.println("Exception in closing DB resources");
+            } 
+        }
+		
 	}
 
 	@Override

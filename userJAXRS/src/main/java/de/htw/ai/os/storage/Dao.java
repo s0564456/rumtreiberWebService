@@ -7,11 +7,13 @@ import de.htw.ai.os.bean.User;
 
 public interface Dao {
 	
-    User authenticate(String userId, String password);
+    LocationEntry authenticate(String userId);
     
     boolean updatePositions(int userId, long longnitude, long lattitude);
     
     Collection<LocationEntry> getAllLocationEntries();
     
     Integer addUser(User user);
+
+	String updatePosition(LocationEntry locationTemplate);
 }
