@@ -6,12 +6,14 @@ import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ApplicationPath;
@@ -57,65 +59,61 @@ public class RumtreiberWebService {
 		return res;
 	}
 	
+	
 	@GET
-	@Path("users/{id}")
+	@Produces(TEXT_PLAIN) 
+	public long registrateNewUser(
+			@QueryParam("userName") String userName	
+	){
+		ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) testDao.getAllLocationEntries();
+		for (LocationEntry locationEntry : res) {
+			if(locationEntry.getUserId().equals(userName)) {
+				throw new ClientErrorException(Status.FORBIDDEN);
+			} 
+		}
+		return testDao.addUser(userName);
+	} 
+
+	@GET
+	@Path("users")
 	@Produces(APPLICATION_JSON)
-	public long queryUserId (
-			@QueryParam("id") String userId
+	public Collection<LocationEntry> getAllUsers(
+			@HeaderParam("auth") long authentiationToken
 	) {
-		LocationEntry user = testDao.authenticate(userId);
-		if(user == null) {
-			System.out.println("User has NOT been authenticated");
-			return 0;
-		}else {
-			System.out.println("User has been authenticated");
-			return 1;
+		/*Token im Authheader prüfen. Wenn gültig, alle Einträge  - außer den des Anfragenden -  in Collection speichern
+		return 401 oder Collection*/
+		if(testDao.authenticate(authentiationToken)) {
+			ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) testDao.getAllLocationEntries();
+			ArrayList<LocationEntry> export = new ArrayList<>();
+			for (LocationEntry locationEntry : res) {
+				long id = locationEntry.getId();
+				if (id != authentiationToken) {
+					export.add(locationEntry);
+				}
+			}
+			return export;
+		} else {
+			throw new ClientErrorException(Status.UNAUTHORIZED);
+			
 		}
 	}
-	
-	/*For later iteration
-	@DELETE
-	@Path("users/{id}")
-	public void deleteUser (
-			@PathParam("id")  final long entityIdentity
-	) {
 
-		System.out.println("delete entry, entered id: " + entityIdentity);
-	}*/
 	
-	@GET
-	@Path("users")
-	@Produces(APPLICATION_JSON)
-	public Collection<LocationEntry> returnUser () {
-		Collection<LocationEntry> res = testDao.getAllLocationEntries();
-		return res;	
-	}
-	
-	@POST
-	@Path("location")
+	@POST 
 	@Consumes(APPLICATION_JSON)
-	@Produces(TEXT_PLAIN)
-	public long updateLocation (
-			@NotNull @Valid LocationEntry locationTemplate
-	) {
-		String result = testDao.updatePosition(locationTemplate);
+	public void updateLocation(
+			@HeaderParam("auth") long authentiationToken,
+			LocationEntry le
+	){
+		/*
+		anhand des Authtkens User ermiiteln
+		wenn gefunden, entsprechenden DB-Eintrag aktualisieren*/
+		
+		String result = testDao.updatePosition(le, authentiationToken);
 		System.out.println("update location: " + result);
-		return 1;
 	}
 	
-	/*For later iteration
-	@POST
-	@Path("users")
-	@Consumes(APPLICATION_JSON)
-	@Produces(TEXT_PLAIN)
-	public long createOrModifyUser (
-			@NotNull @Valid LocationEntry personTemplate,
-			@Context HttpHeaders headers,
-			@HeaderParam("Set-Password") final String password
-	) {
-		
-		
-		System.out.println("create or modify user");
-		return 1;
-	}*/
+	
+	
+
 }

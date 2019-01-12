@@ -25,7 +25,8 @@ public class LocationEntry {
 		this.passwordHash = DEFAULT_HASH;
 	}
 	
-	public LocationEntry(String name, Timestamp timestamp) {
+	public LocationEntry(long id, String name, Timestamp timestamp) {
+		this.id = id;
 		this.userId = name;
 		this.last_timestamp = timestamp;
 	}

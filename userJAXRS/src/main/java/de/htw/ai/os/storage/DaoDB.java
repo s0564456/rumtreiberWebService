@@ -50,9 +50,9 @@ public class DaoDB implements Dao {
 	}
 	 
 	@Override
-	public LocationEntry authenticate(String userId) {
+	public boolean authenticate(long userId) {
 		// TODO Automatisch generierter Methodenstub
-		return null;
+		return false;
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class DaoDB implements Dao {
 	        }
 	}
 	
-	public String updatePosition(LocationEntry locationTemplate) {
+	public String updatePosition(LocationEntry locationTemplate, long auth) {
 		Connection con = null;
         PreparedStatement stmt = null;
         int result;
@@ -134,9 +134,9 @@ public class DaoDB implements Dao {
 	}
 
 	@Override
-	public Integer addUser(User user) {
+	public long addUser(String user) {
 		// TODO Automatisch generierter Methodenstub
-		return null;
+		return 0;
 	}
 
 }
