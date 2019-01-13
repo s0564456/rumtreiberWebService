@@ -13,6 +13,10 @@ public class LocationEntry {
 	private byte[] passwordHash;
 	private Timestamp last_timestamp;
 	private Timestamp secondlast_timestamp;
+	private float lastLongitude;
+	private float lastLatitiude;
+	private float secondLastLongitude;
+	private float secondLastLatitiude;
 	private Point last_position;
 	private Point secondlast_position;
 	private float last_direction;

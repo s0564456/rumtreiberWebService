@@ -52,6 +52,35 @@ public class DaoDB implements Dao {
 	@Override
 	public boolean authenticate(long userId) {
 		// TODO Automatisch generierter Methodenstub
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Collection<LocationEntry> list = new ArrayList<LocationEntry>();
+		LocationEntry entry = null;
+		String searchQuery = SELECT_ALL_LOCATIONENTRIES + " where id='" + userId + "'";
+		
+		try {
+		    con = ds.getConnection();
+		    stmt = con.prepareStatement(searchQuery);
+		    //stmt.setString(1, userId);
+		    rs = stmt.executeQuery();
+		    
+		    boolean more = rs.next(); 
+		    if (more) { 
+		    	return true; 
+	    	}  
+		} catch (SQLException e) {
+		    System.out.println("SQLException getting user");
+		    e.printStackTrace();
+		} finally {
+		    try {
+		        if (rs != null) rs.close();
+		        if (stmt != null) stmt.close();
+		        if (con != null) con.close();
+		    } catch (Exception e) {
+		        System.out.println("Exception in closing DB resources");
+		    } 
+		}
 		return false;
 	}
 
@@ -63,40 +92,40 @@ public class DaoDB implements Dao {
 
 	@Override
 	public Collection<LocationEntry> getAllLocationEntries() {
-		 Connection con = null;
-	        PreparedStatement stmt = null;
-	        ResultSet rs = null;
-	        Collection<LocationEntry> list = new ArrayList<LocationEntry>();
-	        LocationEntry entry = null;
-
-	        try {
-	            con = ds.getConnection();
-	            stmt = con.prepareStatement(SELECT_ALL_LOCATIONENTRIES);
-	            //stmt.setString(1, userId);
-	            rs = stmt.executeQuery();
-	            while (rs.next()) {
-	            	entry = new LocationEntry();
-	            	entry.setId(rs.getInt(1));
-	            	entry.setUserId(rs.getString(2));
-	            	entry.setLastTimestamp(rs.getTimestamp(3));
-	            	entry.setLast_position(((Point) rs.getObject(4))); 
-	            	list.add(entry);
-	            }
-	            
-	            return list;
-	        } catch (SQLException e) {
-	            System.out.println("SQLException getting user");
-	            e.printStackTrace();
-	            return list;
-	        } finally {
-	            try {
-	                if (rs != null) rs.close();
-	                if (stmt != null) stmt.close();
-	                if (con != null) con.close();
-	            } catch (Exception e) {
-	                System.out.println("Exception in closing DB resources");
-	            } 
-	        }
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Collection<LocationEntry> list = new ArrayList<LocationEntry>();
+		LocationEntry entry = null;
+		
+		try {
+		    con = ds.getConnection();
+		    stmt = con.prepareStatement(SELECT_ALL_LOCATIONENTRIES);
+		    //stmt.setString(1, userId);
+		    rs = stmt.executeQuery();
+		    while (rs.next()) {
+		    	entry = new LocationEntry();
+		    	entry.setId(rs.getInt(1));
+		    	entry.setUserId(rs.getString(2));
+		    	entry.setLastTimestamp(rs.getTimestamp(3));
+		    	entry.setLast_position(((Point) rs.getObject(4))); 
+		    	list.add(entry);
+		    }
+		    
+		    return list;
+		} catch (SQLException e) {
+		    System.out.println("SQLException getting user");
+		    e.printStackTrace();
+		    return list;
+		} finally {
+		    try {
+		        if (rs != null) rs.close();
+		        if (stmt != null) stmt.close();
+		        if (con != null) con.close();
+		    } catch (Exception e) {
+		        System.out.println("Exception in closing DB resources");
+		    } 
+		}
 	}
 	
 	public String updatePosition(LocationEntry locationTemplate, long auth) {
@@ -136,6 +165,45 @@ public class DaoDB implements Dao {
 	@Override
 	public long addUser(String user) {
 		// TODO Automatisch generierter Methodenstub
+		Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        //insert new user
+        try {
+            con = ds.getConnection();
+            stmt = con.prepareStatement("INSERT INTO LocationEntry (id)" + 
+            		"VALUES ('" + user + " '); ");
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SQLException updating location");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                System.out.println("Exception in closing DB resources");
+            } 
+        }
+        
+        //return user id
+        try {
+            stmt = con.prepareStatement(SELECT_ALL_LOCATIONENTRIES + " where name='" + user + "'");
+            rs = stmt.executeQuery();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            System.out.println("SQLException updating location");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                System.out.println("Exception in closing DB resources");
+            } 
+        }
+        
 		return 0;
 	}
 

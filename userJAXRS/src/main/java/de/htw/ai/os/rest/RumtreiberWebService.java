@@ -45,7 +45,7 @@ public class RumtreiberWebService {
 	static private final String QUERY_USER = "select u.id from LocationEntry u where " 
 			+ "((:userId is null) or (u.userId = :userId))";
 	private Dao dao = new DaoDB();
-	private Dao testDao = new TestDB();
+	private static Dao testDao = new TestDB();
 	
 	// zum Testen , aus der fertigen Version rausnehmen
 	@GET
@@ -59,31 +59,30 @@ public class RumtreiberWebService {
 		return res;
 	}
 	
-	
 	@GET
 	@Produces(TEXT_PLAIN) 
 	public long registrateNewUser(
 			@QueryParam("userName") String userName	
 	){
-		ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) testDao.getAllLocationEntries();
+		ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) dao.getAllLocationEntries();
 		for (LocationEntry locationEntry : res) {
 			if(locationEntry.getUserId().equals(userName)) {
 				throw new ClientErrorException(Status.FORBIDDEN);
 			} 
 		}
-		return testDao.addUser(userName);
+		return dao.addUser(userName);
 	} 
 
 	@GET
-	@Path("users")
+	@Path("locations")
 	@Produces(APPLICATION_JSON)
-	public Collection<LocationEntry> getAllUsers(
+	public Collection<LocationEntry> getAllLocations(
 			@HeaderParam("auth") long authentiationToken
 	) {
 		/*Token im Authheader prüfen. Wenn gültig, alle Einträge  - außer den des Anfragenden -  in Collection speichern
 		return 401 oder Collection*/
-		if(testDao.authenticate(authentiationToken)) {
-			ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) testDao.getAllLocationEntries();
+		if(dao.authenticate(authentiationToken)) {
+			ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) dao.getAllLocationEntries();
 			ArrayList<LocationEntry> export = new ArrayList<>();
 			for (LocationEntry locationEntry : res) {
 				long id = locationEntry.getId();
@@ -108,9 +107,72 @@ public class RumtreiberWebService {
 		/*
 		anhand des Authtkens User ermiiteln
 		wenn gefunden, entsprechenden DB-Eintrag aktualisieren*/
+		if(dao.authenticate(authentiationToken)) {
+			String result = dao.updatePosition(le, authentiationToken);
+			System.out.println("update location: " + result);
+		} else {
+			throw new ClientErrorException(Status.UNAUTHORIZED);
+		}
 		
-		String result = testDao.updatePosition(le, authentiationToken);
-		System.out.println("update location: " + result);
+	}
+	
+	@GET
+	@Path("testdb")
+	@Produces(TEXT_PLAIN) 
+	public long registrateNewTestUser(
+			@QueryParam("userName") String userName	
+	){
+		ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) testDao.getAllLocationEntries();
+		for (LocationEntry locationEntry : res) {
+			if(locationEntry.getUserId().equals(userName)) {
+				throw new ClientErrorException(Status.FORBIDDEN);
+			} 
+		}
+		return testDao.addUser(userName);
+	} 
+
+	@GET
+	@Path("testdb/locations")
+	@Produces(APPLICATION_JSON)
+	public Collection<LocationEntry> getAllTestLocations(
+			@HeaderParam("auth") long authentiationToken
+	) {
+		/*Token im Authheader prüfen. Wenn gültig, alle Einträge  - außer den des Anfragenden -  in Collection speichern
+		return 401 oder Collection*/
+		if(testDao.authenticate(authentiationToken)) {
+			ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) testDao.getAllLocationEntries();
+			ArrayList<LocationEntry> export = new ArrayList<>();
+			for (LocationEntry locationEntry : res) {
+				long id = locationEntry.getId();
+				if (id != authentiationToken) {
+					export.add(locationEntry);
+				}
+			}
+			return export;
+		} else {
+			throw new ClientErrorException(Status.UNAUTHORIZED);
+			
+		}
+	}
+
+	
+	@POST 
+	@Path("testdb")
+	@Consumes(APPLICATION_JSON)
+	public void updateTestLocation(
+			@HeaderParam("auth") long authentiationToken,
+			LocationEntry le
+	){
+		/*
+		anhand des Authtkens User ermiiteln
+		wenn gefunden, entsprechenden DB-Eintrag aktualisieren*/
+		if(testDao.authenticate(authentiationToken)) {
+			String result = testDao.updatePosition(le, authentiationToken);
+			System.out.println("update location: " + result);
+		} else {
+			throw new ClientErrorException(Status.UNAUTHORIZED);
+		}
+		
 	}
 	
 	

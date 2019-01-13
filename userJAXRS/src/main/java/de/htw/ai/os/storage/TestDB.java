@@ -9,7 +9,7 @@ import de.htw.ai.os.bean.User;
 
 public class TestDB implements Dao{
 	
-	private Collection<LocationEntry> res = new ArrayList<LocationEntry>();
+	private static Collection<LocationEntry> res = new ArrayList<LocationEntry>();
 	public int index = 5;
 	
 	public TestDB() {
@@ -54,8 +54,6 @@ public class TestDB implements Dao{
 		for (LocationEntry locationEntry : res) {
 			long id = locationEntry.getId();
 			if (id == auth) {
-				LocationEntry temp = locationEntry;
-				res.remove(locationEntry);
 				locationEntry.setLast_direction(locationTemplate.getLast_direction());
 				locationEntry.setSecondlast_direction(locationTemplate.getSecondlast_direction());
 				
@@ -64,7 +62,6 @@ public class TestDB implements Dao{
 				
 				locationEntry.setLastTimestamp(locationTemplate.getLastTimestamp());
 				locationEntry.setSecondlastTimestamp(locationTemplate.getSecondlastTimestamp());
-				res.add(temp);
 				return "POSITION UPDATED";
 			}
 		}
