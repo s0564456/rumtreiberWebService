@@ -54,14 +54,17 @@ public class TestDB implements Dao{
 		for (LocationEntry locationEntry : res) {
 			long id = locationEntry.getId();
 			if (id == auth) {
-				locationEntry.setLast_direction(locationTemplate.getLast_direction());
-				locationEntry.setSecondlast_direction(locationTemplate.getSecondlast_direction());
+				locationEntry.setSecondLastDirection(locationEntry.getLastDirection());
+				locationEntry.setLastDirection(locationTemplate.getLastDirection());
 				
-				locationEntry.setLast_position(locationTemplate.getLast_position());
-				locationEntry.setSecondlast_position(locationTemplate.getSecondlast_position());
+				locationEntry.setSecondLastLongitude(locationEntry.getLastLongitude());
+				locationEntry.setSecondLastLatitude(locationEntry.getLastLatitude());
 				
+				locationEntry.setLastLongitude(locationTemplate.getLastLongitude());
+				locationEntry.setLastLatitude(locationTemplate.getLastLatitude());
+				
+				locationEntry.setSecondlastTimestamp(locationEntry.getLastTimestamp());
 				locationEntry.setLastTimestamp(locationTemplate.getLastTimestamp());
-				locationEntry.setSecondlastTimestamp(locationTemplate.getSecondlastTimestamp());
 				return "POSITION UPDATED";
 			}
 		}

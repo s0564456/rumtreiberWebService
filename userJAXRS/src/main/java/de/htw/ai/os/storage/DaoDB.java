@@ -106,9 +106,21 @@ public class DaoDB implements Dao {
 		    while (rs.next()) {
 		    	entry = new LocationEntry();
 		    	entry.setId(rs.getInt(1));
-		    	entry.setUserId(rs.getString(2));
-		    	entry.setLastTimestamp(rs.getTimestamp(3));
-		    	entry.setLast_position(((Point) rs.getObject(4))); 
+		    	entry.setName(rs.getString(2));
+		    	entry.setLastTimestamp(rs.getTimestamp(4));
+		    	
+		    	Point lastPosition = (Point) rs.getObject(5);
+		    	entry.setLastLatitude(lastPosition.getX());
+		    	entry.setLastLongitude(lastPosition.getY());
+		    	
+		    	entry.setSecondlastTimestamp(rs.getTimestamp(6));
+		    	Point secondLastPosition = (Point) rs.getObject(7);
+		    	entry.setSecondLastLatitude(secondLastPosition.getX());
+		    	entry.setSecondLastLongitude(secondLastPosition.getY());
+		    	
+		    	entry.setLastDirection(rs.getFloat(8));
+		    	entry.setSecondLastDirection(rs.getFloat(9));
+		    	
 		    	list.add(entry);
 		    }
 		    
@@ -136,15 +148,16 @@ public class DaoDB implements Dao {
         try {
             con = ds.getConnection();
             stmt = con.prepareStatement("UPDATE LocationEntry "
-            		+ "SET last_timestemp = ?,  secondlast_timestemp = ?, last_position = ?, secondlast_position = ?, last_direction = ?, secondlast_direction = ?"
+            		+ "SET last_timestemp = ?,  secondlast_timestemp = ?, "
+            		+ "last_position = ST_GeomFromText('POINT(" + locationTemplate.getLastLongitude() + " " +  locationTemplate.getLastLatitude() + ")',4326), "
+    				+ "secondlast_position = ST_GeomFromText('POINT(" + locationTemplate.getSecondLastLongitude() + " " +  locationTemplate.getSecondLastLatitude() + ")',4326), "
+            		+ "last_direction = ?, secondlast_direction = ?"
             		+ "WHERE userId = ?");
             stmt.setTimestamp(1, locationTemplate.getLastTimestamp());
             stmt.setTimestamp(2, locationTemplate.getSecondlastTimestamp());
-            stmt.setString(3, locationTemplate.getLast_position().toString());
-            stmt.setString(4, locationTemplate.getSecondlast_position().toString());
-            stmt.setFloat(5, locationTemplate.getLast_direction());
-            stmt.setFloat(6, locationTemplate.getSecondlast_direction());
-            stmt.setString(7, locationTemplate.getUserId());
+            stmt.setFloat(3, locationTemplate.getLastDirection());
+            stmt.setFloat(4, locationTemplate.getSecondLastDirection());
+            stmt.setString(5, locationTemplate.getName());
             result = stmt.executeUpdate();
             return "INSERTION SUCCEDED";
         } catch (SQLException e) {

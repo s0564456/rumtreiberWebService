@@ -1,6 +1,5 @@
 package de.htw.ai.os.bean;
 
-import java.awt.Point;
 import java.sql.Timestamp;
 
 
@@ -9,30 +8,28 @@ public class LocationEntry {
 	static private final byte[] DEFAULT_HASH = HashTools.sha256HashCode("");
 	
 	private long id;
-	private String userId;
+	private String name;
 	private byte[] passwordHash;
-	private Timestamp last_timestamp;
-	private Timestamp secondlast_timestamp;
-	private float lastLongitude;
-	private float lastLatitiude;
-	private float secondLastLongitude;
-	private float secondLastLatitiude;
-	private Point last_position;
-	private Point secondlast_position;
-	private float last_direction;
-	private float secondlast_direction;
+	private Timestamp lastTimestamp;
+	private Timestamp secondlastTimestamp;
+	private double lastLongitude;
+	private double secondLastLongitude;
+	private double lastLatitude;
+	private double secondLastLatitude;
+	private float lastDirection;
+	private float secondLastDirection;
 	
 	
 	public LocationEntry() {
 		this.id = 0;
-		this.userId = "newUser";
+		this.name = "newUser";
 		this.passwordHash = DEFAULT_HASH;
 	}
 	
 	public LocationEntry(long id, String name, Timestamp timestamp) {
 		this.id = id;
-		this.userId = name;
-		this.last_timestamp = timestamp;
+		this.name = name;
+		this.lastTimestamp = timestamp;
 	}
 	
 	
@@ -44,12 +41,12 @@ public class LocationEntry {
 		this.id = id;
 	}
 	
-	public String getUserId() {
-		return userId;
+	public String getName() {
+		return name;
 	}
 
-	public void setUserId(final String userId) {
-		this.userId = userId;
+	public void setName(final String userId) {
+		this.name = userId;
 	}
 	
 	public byte[] getPasswordHash() {
@@ -59,52 +56,68 @@ public class LocationEntry {
 	public void setPasswordHash(final byte[] passwordHash) {
 		this.passwordHash = passwordHash;
 	}
-	
+
 	public Timestamp getLastTimestamp() {
-		return last_timestamp;
+		return lastTimestamp;
 	}
 
-	public void setLastTimestamp(final Timestamp lastTimestamp) {
-		this.last_timestamp = lastTimestamp;
+	public void setLastTimestamp(Timestamp lastTimestamp) {
+		this.lastTimestamp = lastTimestamp;
 	}
-	
+
 	public Timestamp getSecondlastTimestamp() {
-		return secondlast_timestamp;
+		return secondlastTimestamp;
 	}
 
-	public void setSecondlastTimestamp(final Timestamp secondlastTimestamp) {
-		this.secondlast_timestamp = secondlastTimestamp;
-	}
-	
-	public Point getLast_position() {
-		return last_position;
+	public void setSecondlastTimestamp(Timestamp secondlastTimestamp) {
+		this.secondlastTimestamp = secondlastTimestamp;
 	}
 
-	public void setLast_position(final Point last_position) {
-		this.last_position = last_position;
-	}
-	
-	public Point getSecondlast_position() {
-		return secondlast_position;
-	}
-	
-	public void setSecondlast_position(final Point secondlast_position) {
-		this.secondlast_position = secondlast_position;
-	}
-	
-	public float getLast_direction() {
-		return last_direction;
+	public double getLastLongitude() {
+		return lastLongitude;
 	}
 
-	public void setLast_direction(final float last_direction) {
-		this.last_direction = last_direction;
+	public void setLastLongitude(double lastLognitude) {
+		this.lastLongitude = lastLognitude;
 	}
 
-	public float getSecondlast_direction() {
-		return secondlast_direction;
+	public double getSecondLastLongitude() {
+		return secondLastLongitude;
 	}
 
-	public void setSecondlast_direction(final float secondlast_direction) {
-		this.secondlast_direction = secondlast_direction;
+	public void setSecondLastLongitude(double secondLastLognitude) {
+		this.secondLastLongitude = secondLastLognitude;
+	}
+
+	public double getLastLatitude() {
+		return lastLatitude;
+	}
+
+	public void setLastLatitude(double lastLattitude) {
+		this.lastLatitude = lastLattitude;
+	}
+
+	public double getSecondLastLatitude() {
+		return secondLastLatitude;
+	}
+
+	public void setSecondLastLatitude(double secondLastLattitude) {
+		this.secondLastLatitude = secondLastLattitude;
+	}
+
+	public float getLastDirection() {
+		return lastDirection;
+	}
+
+	public void setLastDirection(float lastDirection) {
+		this.lastDirection = lastDirection;
+	}
+
+	public float getSecondLastDirection() {
+		return secondLastDirection;
+	}
+
+	public void setSecondLastDirection(float secondlastDirection) {
+		this.secondLastDirection = secondlastDirection;
 	}
 }

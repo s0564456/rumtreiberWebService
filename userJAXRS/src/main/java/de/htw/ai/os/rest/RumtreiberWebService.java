@@ -48,9 +48,9 @@ public class RumtreiberWebService {
 	private static Dao testDao = new TestDB();
 	
 	// zum Testen , aus der fertigen Version rausnehmen
+	// wie folgt addressiert:  http://localhost bzw rumtreiber.f4.htw-berlin.de:8080/rumtreiber/data/tunichtgut/hi
 	@GET
 	@Path("hi")
-	// wie folgt addressiert:  http://localhost bzw rumtreiber.f4.htw-berlin.de:8080/rumtreiber/data/tunichtgut/hi
 	@Produces(APPLICATION_JSON)
 	public Collection<LocationEntry> getirgendwas() {
 		System.out.println("Method entered " );
@@ -64,9 +64,11 @@ public class RumtreiberWebService {
 	public long registrateNewUser(
 			@QueryParam("userName") String userName	
 	){
+		if (userName == null) throw new ClientErrorException(Status.FORBIDDEN);
+		
 		ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) dao.getAllLocationEntries();
 		for (LocationEntry locationEntry : res) {
-			if(locationEntry.getUserId().equals(userName)) {
+			if(locationEntry.getName().equals(userName)) {
 				throw new ClientErrorException(Status.FORBIDDEN);
 			} 
 		}
@@ -79,8 +81,6 @@ public class RumtreiberWebService {
 	public Collection<LocationEntry> getAllLocations(
 			@HeaderParam("auth") long authentiationToken
 	) {
-		/*Token im Authheader prüfen. Wenn gültig, alle Einträge  - außer den des Anfragenden -  in Collection speichern
-		return 401 oder Collection*/
 		if(dao.authenticate(authentiationToken)) {
 			ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) dao.getAllLocationEntries();
 			ArrayList<LocationEntry> export = new ArrayList<>();
@@ -104,9 +104,8 @@ public class RumtreiberWebService {
 			@HeaderParam("auth") long authentiationToken,
 			LocationEntry le
 	){
-		/*
-		anhand des Authtkens User ermiiteln
-		wenn gefunden, entsprechenden DB-Eintrag aktualisieren*/
+		if(le == null) throw new ClientErrorException(Status.FORBIDDEN);
+		
 		if(dao.authenticate(authentiationToken)) {
 			String result = dao.updatePosition(le, authentiationToken);
 			System.out.println("update location: " + result);
@@ -122,9 +121,10 @@ public class RumtreiberWebService {
 	public long registrateNewTestUser(
 			@QueryParam("userName") String userName	
 	){
+		if (userName == null) throw new ClientErrorException(Status.FORBIDDEN);
 		ArrayList<LocationEntry> res = (ArrayList<LocationEntry>) testDao.getAllLocationEntries();
 		for (LocationEntry locationEntry : res) {
-			if(locationEntry.getUserId().equals(userName)) {
+			if(locationEntry.getName().equals(userName)) {
 				throw new ClientErrorException(Status.FORBIDDEN);
 			} 
 		}
@@ -166,6 +166,8 @@ public class RumtreiberWebService {
 		/*
 		anhand des Authtkens User ermiiteln
 		wenn gefunden, entsprechenden DB-Eintrag aktualisieren*/
+		
+		if(le == null) throw new ClientErrorException(Status.FORBIDDEN);
 		if(testDao.authenticate(authentiationToken)) {
 			String result = testDao.updatePosition(le, authentiationToken);
 			System.out.println("update location: " + result);
