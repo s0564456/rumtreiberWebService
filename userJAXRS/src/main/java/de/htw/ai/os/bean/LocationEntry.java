@@ -1,14 +1,17 @@
 package de.htw.ai.os.bean;
 
 import java.sql.Timestamp;
+import com.fasterxml.jackson.annotation.JsonIgnore
 
 
 public class LocationEntry {
 	
 	static private final byte[] DEFAULT_HASH = HashTools.sha256HashCode("");
 	
+	@JsonIgnore
 	private long id;
 	private String name;
+	@JsonIgnore
 	private byte[] passwordHash;
 	private Timestamp lastTimestamp;
 	private Timestamp secondlastTimestamp;
