@@ -13,6 +13,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.postgis.Geometry;
+import org.postgis.PGgeometry;
+import org.postgresql.geometric.PGpoint;
 import org.postgresql.util.PGobject;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
@@ -51,7 +54,6 @@ public class DaoDB implements Dao {
 	 
 	@Override
 	public boolean authenticate(long userId) {
-		// TODO Automatisch generierter Methodenstub
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -62,7 +64,6 @@ public class DaoDB implements Dao {
 		try {
 		    con = ds.getConnection();
 		    stmt = con.prepareStatement(searchQuery);
-		    //stmt.setString(1, userId);
 		    rs = stmt.executeQuery();
 		    
 		    boolean more = rs.next(); 
@@ -101,7 +102,6 @@ public class DaoDB implements Dao {
 		try {
 		    con = ds.getConnection();
 		    stmt = con.prepareStatement(SELECT_ALL_LOCATIONENTRIES);
-		    //stmt.setString(1, userId);
 		    rs = stmt.executeQuery();
 		    while (rs.next()) {
 		    	entry = new LocationEntry();
@@ -109,14 +109,19 @@ public class DaoDB implements Dao {
 		    	entry.setName(rs.getString(2));
 		    	entry.setLastTimestamp(rs.getTimestamp(4));
 		    	
-		    	Point lastPosition = (Point) rs.getObject(5);
-		    	entry.setLastLatitude(lastPosition.getX());
-		    	entry.setLastLongitude(lastPosition.getY());
+		    	PGgeometry lastPosition = (PGgeometry) rs.getObject(5);
+		    	if(lastPosition != null) {
+		    		entry.setLastLongitude(lastPosition.getGeometry().getPoint(0).x);
+			    	entry.setLastLatitude(lastPosition.getGeometry().getPoint(0).y);
+		    	}
 		    	
 		    	entry.setSecondlastTimestamp(rs.getTimestamp(6));
-		    	Point secondLastPosition = (Point) rs.getObject(7);
-		    	entry.setSecondLastLatitude(secondLastPosition.getX());
-		    	entry.setSecondLastLongitude(secondLastPosition.getY());
+		    	
+		    	PGgeometry secondLastPosition = (PGgeometry) rs.getObject(7);
+		    	if(secondLastPosition != null) {
+		    		entry.setSecondLastLongitude(secondLastPosition.getGeometry().getPoint(0).x);
+			    	entry.setSecondLastLatitude(secondLastPosition.getGeometry().getPoint(0).y);
+		    	}
 		    	
 		    	entry.setLastDirection(rs.getFloat(8));
 		    	entry.setSecondLastDirection(rs.getFloat(9));
@@ -147,17 +152,17 @@ public class DaoDB implements Dao {
 
         try {
             con = ds.getConnection();
-            stmt = con.prepareStatement("UPDATE LocationEntry "
+            stmt = con.prepareStatement("UPDATE ws18_19.rumtreiber "
             		+ "SET last_timestemp = ?,  secondlast_timestemp = ?, "
             		+ "last_position = ST_GeomFromText('POINT(" + locationTemplate.getLastLongitude() + " " +  locationTemplate.getLastLatitude() + ")',4326), "
     				+ "secondlast_position = ST_GeomFromText('POINT(" + locationTemplate.getSecondLastLongitude() + " " +  locationTemplate.getSecondLastLatitude() + ")',4326), "
             		+ "last_direction = ?, secondlast_direction = ?"
-            		+ "WHERE userId = ?");
+            		+ " WHERE id = ?");
             stmt.setTimestamp(1, locationTemplate.getLastTimestamp());
             stmt.setTimestamp(2, locationTemplate.getSecondlastTimestamp());
             stmt.setFloat(3, locationTemplate.getLastDirection());
             stmt.setFloat(4, locationTemplate.getSecondLastDirection());
-            stmt.setString(5, locationTemplate.getName());
+            stmt.setLong(5, auth);
             result = stmt.executeUpdate();
             return "INSERTION SUCCEDED";
         } catch (SQLException e) {
@@ -185,8 +190,8 @@ public class DaoDB implements Dao {
         //insert new user
         try {
             con = ds.getConnection();
-            stmt = con.prepareStatement("INSERT INTO LocationEntry (id)" + 
-            		"VALUES ('" + user + " '); ");
+            stmt = con.prepareStatement("INSERT INTO ws18_19.rumtreiber (name)" + 
+            		"VALUES ('" + user + "'); ");
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("SQLException updating location");
@@ -202,14 +207,17 @@ public class DaoDB implements Dao {
         
         //return user id
         try {
+        	con = ds.getConnection();
             stmt = con.prepareStatement(SELECT_ALL_LOCATIONENTRIES + " where name='" + user + "'");
             rs = stmt.executeQuery();
+            rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
             System.out.println("SQLException updating location");
             e.printStackTrace();
         } finally {
             try {
+            	if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
                 if (con != null) con.close();
             } catch (Exception e) {
