@@ -1,7 +1,7 @@
 package de.htw.ai.os.bean;
 
 import java.sql.Timestamp;
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 public class LocationEntry {
