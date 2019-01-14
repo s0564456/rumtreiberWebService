@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.htw.ai.os.bean.LocationEntry;
-import de.htw.ai.os.bean.User;
 
 public class TestDB implements Dao{
 	
@@ -28,12 +27,6 @@ public class TestDB implements Dao{
 				return true;
 			}
 		}
-		return false;
-	}
-
-	@Override
-	public boolean updatePositions(int userId, long longnitude, long lattitude) {
-		// TODO Automatisch generierter Methodenstub
 		return false;
 	}
 
@@ -63,7 +56,7 @@ public class TestDB implements Dao{
 				locationEntry.setLastLongitude(locationTemplate.getLastLongitude());
 				locationEntry.setLastLatitude(locationTemplate.getLastLatitude());
 				
-				locationEntry.setSecondlastTimestamp(locationEntry.getLastTimestamp());
+				locationEntry.setSecondLastTimestamp(locationEntry.getLastTimestamp());
 				locationEntry.setLastTimestamp(locationTemplate.getLastTimestamp());
 				return "POSITION UPDATED";
 			}

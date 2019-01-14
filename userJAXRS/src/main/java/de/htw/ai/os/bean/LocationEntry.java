@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class LocationEntry {
 	
 	static private final byte[] DEFAULT_HASH = HashTools.sha256HashCode("");
+	static private final Timestamp DEFAULT_TIMESTAMP = new Timestamp(0);
 	
 	@JsonIgnore
 	private long id;
@@ -14,7 +15,7 @@ public class LocationEntry {
 	@JsonIgnore
 	private byte[] passwordHash;
 	private Timestamp lastTimestamp;
-	private Timestamp secondlastTimestamp;
+	private Timestamp secondLastTimestamp;
 	private double lastLongitude;
 	private double secondLastLongitude;
 	private double lastLatitude;
@@ -27,12 +28,15 @@ public class LocationEntry {
 		this.id = 0;
 		this.name = "newUser";
 		this.passwordHash = DEFAULT_HASH;
+		this.lastTimestamp = DEFAULT_TIMESTAMP;
+		this.lastTimestamp = DEFAULT_TIMESTAMP;
 	}
 	
 	public LocationEntry(long id, String name, Timestamp timestamp) {
 		this.id = id;
 		this.name = name;
 		this.lastTimestamp = timestamp;
+		this.secondLastTimestamp = timestamp;
 	}
 	
 	
@@ -61,19 +65,27 @@ public class LocationEntry {
 	}
 
 	public Timestamp getLastTimestamp() {
-		return lastTimestamp;
+		if (lastTimestamp == null) {
+			return DEFAULT_TIMESTAMP;
+		}else {
+			return lastTimestamp;
+		}
 	}
 
 	public void setLastTimestamp(Timestamp lastTimestamp) {
 		this.lastTimestamp = lastTimestamp;
 	}
 
-	public Timestamp getSecondlastTimestamp() {
-		return secondlastTimestamp;
+	public Timestamp getSecondLastTimestamp() {
+		if (secondLastTimestamp == null) {
+			return DEFAULT_TIMESTAMP;
+		} else {
+			return secondLastTimestamp;
+		}
 	}
 
-	public void setSecondlastTimestamp(Timestamp secondlastTimestamp) {
-		this.secondlastTimestamp = secondlastTimestamp;
+	public void setSecondLastTimestamp(Timestamp secondLastTimestamp) {
+		this.secondLastTimestamp = secondLastTimestamp;
 	}
 
 	public double getLastLongitude() {

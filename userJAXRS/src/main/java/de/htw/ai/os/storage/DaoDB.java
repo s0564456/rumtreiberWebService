@@ -1,6 +1,5 @@
 package de.htw.ai.os.storage;
 
-import java.awt.Point;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,15 +12,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.postgis.Geometry;
 import org.postgis.PGgeometry;
-import org.postgresql.geometric.PGpoint;
-import org.postgresql.util.PGobject;
-
-import com.fasterxml.jackson.databind.util.JSONPObject;
-
 import de.htw.ai.os.bean.LocationEntry;
-import de.htw.ai.os.bean.User;
+
 
 
 /*
@@ -57,8 +50,6 @@ public class DaoDB implements Dao {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		Collection<LocationEntry> list = new ArrayList<LocationEntry>();
-		LocationEntry entry = null;
 		String searchQuery = SELECT_ALL_LOCATIONENTRIES + " where id='" + userId + "'";
 		
 		try {
@@ -86,12 +77,6 @@ public class DaoDB implements Dao {
 	}
 
 	@Override
-	public boolean updatePositions(int userId, long longnitude, long lattitude) {
-		// TODO Automatisch generierter Methodenstub
-		return false;
-	}
-
-	@Override
 	public Collection<LocationEntry> getAllLocationEntries() {
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -115,7 +100,7 @@ public class DaoDB implements Dao {
 			    	entry.setLastLatitude(lastPosition.getGeometry().getPoint(0).y);
 		    	}
 		    	
-		    	entry.setSecondlastTimestamp(rs.getTimestamp(6));
+		    	entry.setSecondLastTimestamp(rs.getTimestamp(6));
 		    	
 		    	PGgeometry secondLastPosition = (PGgeometry) rs.getObject(7);
 		    	if(secondLastPosition != null) {
@@ -148,7 +133,6 @@ public class DaoDB implements Dao {
 	public String updatePosition(LocationEntry locationTemplate, long auth) {
 		Connection con = null;
         PreparedStatement stmt = null;
-        int result;
 
         try {
             con = ds.getConnection();
@@ -159,11 +143,11 @@ public class DaoDB implements Dao {
             		+ "last_direction = ?, secondlast_direction = ?"
             		+ " WHERE id = ?");
             stmt.setTimestamp(1, locationTemplate.getLastTimestamp());
-            stmt.setTimestamp(2, locationTemplate.getSecondlastTimestamp());
+            stmt.setTimestamp(2, locationTemplate.getSecondLastTimestamp());
             stmt.setFloat(3, locationTemplate.getLastDirection());
             stmt.setFloat(4, locationTemplate.getSecondLastDirection());
             stmt.setLong(5, auth);
-            result = stmt.executeUpdate();
+            stmt.executeUpdate();
             return "INSERTION SUCCEDED";
         } catch (SQLException e) {
             System.out.println("SQLException updating location");

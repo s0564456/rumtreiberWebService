@@ -42,22 +42,9 @@ import de.htw.ai.os.storage.TestDB;
 @Path("/tunichtgut")
 public class RumtreiberWebService {
 	
-	static private final String QUERY_USER = "select u.id from LocationEntry u where " 
-			+ "((:userId is null) or (u.userId = :userId))";
 	private Dao dao = new DaoDB();
 	private static Dao testDao = new TestDB();
 	
-	// zum Testen , aus der fertigen Version rausnehmen
-	// wie folgt addressiert:  http://localhost bzw rumtreiber.f4.htw-berlin.de:8080/rumtreiber/data/tunichtgut/hi
-	@GET
-	@Path("hi")
-	@Produces(APPLICATION_JSON)
-	public Collection<LocationEntry> getirgendwas() {
-		System.out.println("Method entered " );
-		Collection<LocationEntry> res = dao.getAllLocationEntries();
-		System.out.println("getUser: Returning user harry " );
-		return res;
-	}
 	
 	@GET
 	@Produces(TEXT_PLAIN) 
