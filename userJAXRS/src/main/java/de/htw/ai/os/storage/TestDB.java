@@ -5,34 +5,63 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.htw.ai.os.bean.LocationEntry;
-import de.htw.ai.os.bean.User;
 
 public class TestDB implements Dao{
-
-	@Override
-	public User authenticate(String userId, String password) {
-		// TODO Automatisch generierter Methodenstub
-		return null;
+	
+	private static Collection<LocationEntry> res = new ArrayList<LocationEntry>();
+	public int index = 5;
+	
+	public TestDB() {
+		res.add(new LocationEntry( 1, "Harry", new Timestamp(System.currentTimeMillis() )));
+		res.add(new LocationEntry( 2, "Snape", new Timestamp(System.currentTimeMillis() )));
+		res.add(new LocationEntry( 3, "Dumbledore", new Timestamp(System.currentTimeMillis() )));
+		res.add(new LocationEntry( 4, "McGonagle", new Timestamp(System.currentTimeMillis() )));
+		res.add(new LocationEntry( 5, "Finch", new Timestamp(System.currentTimeMillis() )));
 	}
 
 	@Override
-	public boolean updatePositions(int userId, long longnitude, long lattitude) {
-		// TODO Automatisch generierter Methodenstub
+	public boolean authenticate(long token) {
+		for (LocationEntry locationEntry : res) {
+			long id = locationEntry.getId();
+			if (id == token) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public Collection<LocationEntry> getAllLocationEntries() {
-		Collection<LocationEntry> res = new ArrayList<LocationEntry>();
-		res.add(new LocationEntry("Stephan", new Timestamp(System.currentTimeMillis() )));
-		res.add(new LocationEntry("Helene", new Timestamp(22299393 )));
 		return res;
 	}
 
 	@Override
-	public Integer addUser(User user) {
-		// TODO Automatisch generierter Methodenstub
-		return null;
+	public long addUser(String user) {
+		++index;
+		res.add(new LocationEntry( index, user, new Timestamp(System.currentTimeMillis() )));
+		return index;
+	}
+
+	@Override
+	public String updatePosition(LocationEntry locationTemplate, long auth) {
+		for (LocationEntry locationEntry : res) {
+			long id = locationEntry.getId();
+			if (id == auth) {
+				locationEntry.setSecondLastDirection(locationEntry.getLastDirection());
+				locationEntry.setLastDirection(locationTemplate.getLastDirection());
+				
+				locationEntry.setSecondLastLongitude(locationEntry.getLastLongitude());
+				locationEntry.setSecondLastLatitude(locationEntry.getLastLatitude());
+				
+				locationEntry.setLastLongitude(locationTemplate.getLastLongitude());
+				locationEntry.setLastLatitude(locationTemplate.getLastLatitude());
+				
+				locationEntry.setSecondLastTimestamp(locationEntry.getLastTimestamp());
+				locationEntry.setLastTimestamp(locationTemplate.getLastTimestamp());
+				return "POSITION UPDATED";
+			}
+		}
+		return "POSITION UPDATE FAILED";
 	}
 
 }

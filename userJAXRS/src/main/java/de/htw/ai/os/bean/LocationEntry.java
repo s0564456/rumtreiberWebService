@@ -1,83 +1,138 @@
 package de.htw.ai.os.bean;
 
 import java.sql.Timestamp;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 public class LocationEntry {
 	
+	static private final byte[] DEFAULT_HASH = HashTools.sha256HashCode("");
+	static private final Timestamp DEFAULT_TIMESTAMP = new Timestamp(0);
+	
+	@JsonIgnore
+	private long id;
 	private String name;
+	@JsonIgnore
+	private byte[] passwordHash;
 	private Timestamp lastTimestamp;
-	private Timestamp secondlastTimestamp;
-	private double lastLognitude;
-	private double secondlastLognitude;
-	private double lastLattitude;
-	private double secondlastLattitude;
+	private Timestamp secondLastTimestamp;
+	private double lastLongitude;
+	private double secondLastLongitude;
+	private double lastLatitude;
+	private double secondLastLatitude;
+	private float lastDirection;
+	private float secondLastDirection;
+	
+	
+	public LocationEntry() {
+		this.id = 0;
+		this.name = "newUser";
+		this.passwordHash = DEFAULT_HASH;
+		this.lastTimestamp = DEFAULT_TIMESTAMP;
+		this.lastTimestamp = DEFAULT_TIMESTAMP;
+	}
+	
+	public LocationEntry(long id, String name, Timestamp timestamp) {
+		this.id = id;
+		this.name = name;
+		this.lastTimestamp = timestamp;
+		this.secondLastTimestamp = timestamp;
+	}
+	
+	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(final long id) {
+		this.id = id;
+	}
 	
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(final String userId) {
+		this.name = userId;
+	}
+	
+	public byte[] getPasswordHash() {
+		return passwordHash;
+	}
+
+	public void setPasswordHash(final byte[] passwordHash) {
+		this.passwordHash = passwordHash;
 	}
 
 	public Timestamp getLastTimestamp() {
-		return lastTimestamp;
+		if (lastTimestamp == null) {
+			return DEFAULT_TIMESTAMP;
+		}else {
+			return lastTimestamp;
+		}
 	}
 
 	public void setLastTimestamp(Timestamp lastTimestamp) {
 		this.lastTimestamp = lastTimestamp;
 	}
 
-	public Timestamp getSecondlastTimestamp() {
-		return secondlastTimestamp;
+	public Timestamp getSecondLastTimestamp() {
+		if (secondLastTimestamp == null) {
+			return DEFAULT_TIMESTAMP;
+		} else {
+			return secondLastTimestamp;
+		}
 	}
 
-	public void setSecondlastTimestamp(Timestamp secondlastTimestamp) {
-		this.secondlastTimestamp = secondlastTimestamp;
+	public void setSecondLastTimestamp(Timestamp secondLastTimestamp) {
+		this.secondLastTimestamp = secondLastTimestamp;
 	}
 
-	public double getLastLognitude() {
-		return lastLognitude;
+	public double getLastLongitude() {
+		return lastLongitude;
 	}
 
-	public void setLastLognitude(double lastLognitude) {
-		this.lastLognitude = lastLognitude;
+	public void setLastLongitude(double lastLognitude) {
+		this.lastLongitude = lastLognitude;
 	}
 
-	public double getSecondlastLognitude() {
-		return secondlastLognitude;
+	public double getSecondLastLongitude() {
+		return secondLastLongitude;
 	}
 
-	public void setSecondlastLognitude(double secondlastLognitude) {
-		this.secondlastLognitude = secondlastLognitude;
+	public void setSecondLastLongitude(double secondLastLognitude) {
+		this.secondLastLongitude = secondLastLognitude;
 	}
 
-	public double getLastLattitude() {
-		return lastLattitude;
+	public double getLastLatitude() {
+		return lastLatitude;
 	}
 
-	public void setLastLattitude(double lastLattitude) {
-		this.lastLattitude = lastLattitude;
+	public void setLastLatitude(double lastLattitude) {
+		this.lastLatitude = lastLattitude;
 	}
 
-	public double getSecondlastLattitude() {
-		return secondlastLattitude;
+	public double getSecondLastLatitude() {
+		return secondLastLatitude;
 	}
 
-	public void setSecondlastLattitude(double secondlastLattitude) {
-		this.secondlastLattitude = secondlastLattitude;
+	public void setSecondLastLatitude(double secondLastLattitude) {
+		this.secondLastLatitude = secondLastLattitude;
 	}
 
-
-	
-	
-	public LocationEntry(){
-		
-	}
-	
-	public LocationEntry(String name, Timestamp lastTimestamp){
-		this.name = name;
-		this.lastTimestamp = lastTimestamp;
+	public float getLastDirection() {
+		return lastDirection;
 	}
 
+	public void setLastDirection(float lastDirection) {
+		this.lastDirection = lastDirection;
+	}
+
+	public float getSecondLastDirection() {
+		return secondLastDirection;
+	}
+
+	public void setSecondLastDirection(float secondlastDirection) {
+		this.secondLastDirection = secondlastDirection;
+	}
 }

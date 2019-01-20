@@ -20,7 +20,7 @@
 
 	<resource-ref>
 		<description>advi DB Datasource</description>
-		<res-ref-name>jdbc/adviDB</res-ref-name>
+		<res-ref-name>jdbc/rumtreiberDB</res-ref-name>
 		<res-type>javax.sql.DataSource</res-type>
 		<res-auth>Container</res-auth>
 	</resource-ref>
